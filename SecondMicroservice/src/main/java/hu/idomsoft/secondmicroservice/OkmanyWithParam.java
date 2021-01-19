@@ -10,6 +10,6 @@ public class OkmanyWithParam extends Okmany {
 			String okmanySzam,
 			String lejarDat,
 			MultipartFile okmanyKep) throws IOException {
-		super(okmTipus, okmanySzam, lejarDat, okmanyKep.getBytes());
+		super(okmTipus, okmanySzam, Okmany.stringToDate(lejarDat), okmanyKep.getBytes());
 	}
 }

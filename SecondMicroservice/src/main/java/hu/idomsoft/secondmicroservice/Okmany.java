@@ -45,6 +45,16 @@ public class Okmany {
 			e.printStackTrace();
 		}
 	}
+ 	
+ 	public static Date stringToDate(String stringDate) {
+ 		Date date;
+ 		try { date= sdf.parse(stringDate);}
+ 		catch (java.text.ParseException e) {
+ 			throw new IllegalArgumentException("stringDate "+stringDate+" did not match the " +SecondMicroserviceApplication.dateFormat);
+			}
+		System.out.println("stringToDate("+stringDate+")->"+date.toString());
+ 		return date;
+ 	}
 	
 	public OkmanyDTO getOkmanyDTO() {
 		return okmanyDTO;
@@ -52,6 +62,7 @@ public class Okmany {
 
 	private void setOkmTipus(String okmTipus) throws IllegalArgumentException{
 		if (okmanyDict.containsKey(okmTipus)) {
+			System.out.println("setOkmTipus("+okmTipus+")");
 			okmanyDTO.setOkmTipus(okmTipus);}
 		else {
 			throw new IllegalArgumentException("okmTipus "+okmTipus+" is not in "+okmanyDict.toString());
@@ -75,19 +86,16 @@ public class Okmany {
 				regex="\\w{0,10}";
 		}
 		if (okmanySzam.matches(regex)) {
+			System.out.println("setOkmanySzam("+okmanySzam+")");
 			okmanyDTO.setOkmanySzam(okmanySzam);}
 		else {
 			throw new IllegalArgumentException("okmanySzam "+okmanySzam+" did not match the "+regex+" regex!");
 		}		
 	}
 	
-	private void setLejarDat(String lejarDat) {
-		try {
-			Date date= sdf.parse(lejarDat);
-			okmanyDTO.setLejarDat(date);
-		} catch (java.text.ParseException e) {
-			e.printStackTrace();
-		}
+	private void setLejarDat(Date lejarDat) {
+		System.out.println("setLejarDat("+lejarDat.toString()+")");
+		okmanyDTO.setLejarDat(lejarDat);
 	}
 	
 	private void setErvenyes(){
@@ -95,7 +103,9 @@ public class Okmany {
 		lejarat.setHours(23);
 		lejarat.setMinutes(59);
 		lejarat.setSeconds(59);
-		okmanyDTO.setErvenyes(new Date().before(lejarat));
+		boolean ervenyes=new Date().before(lejarat);
+		System.out.println("setErvenyes("+Boolean.toString(ervenyes)+")");
+		okmanyDTO.setErvenyes(ervenyes);
 	}
 	
 	private void setOkmanyKep(byte[] okmanyKep) {
@@ -119,18 +129,21 @@ public class Okmany {
 					"Got "+Integer.toString(height)+"x"+Integer.toString(width)+
 					". Please use 1063x827.");
 		}
+		System.out.println("setOkmanyKep("+contentType+","+Integer.toString(width)+"x"+Integer.toString(height)+")");
 		okmanyDTO.setOkmanyKep(okmanyKep);		
 	}
 	public Okmany(
 			String okmTipus,
 			String okmanySzam,
-			String lejarDat,
+			Date lejarDat,
 			byte[]  okmanyKep){
+		System.out.println("Okmany(");
+		setOkmanyKep(okmanyKep);
 		setOkmTipus(okmTipus);//needed before okmany szam
 		setOkmanySzam(okmanySzam);
 		setLejarDat(lejarDat);//needed before ervenyes
 		setErvenyes();
-		setOkmanyKep(okmanyKep);
+		System.out.println(")");
 	}
 
 }
