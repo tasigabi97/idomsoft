@@ -29,11 +29,19 @@ public class Szemely {
     private void setOkmLista(ArrayList<OkmanyDTO> okmLista) {
     	System.out.println("setOkmLista(");
     	ArrayList<OkmanyDTO> correctedOkmLista = new ArrayList<>();
+    	ArrayList<String> ervenyesTipusok = new ArrayList<>();
     	RestTemplate rt = new RestTemplate();
     	for(OkmanyDTO originalOkmanyDTO:okmLista) {
     		ResponseEntity<OkmanyDTO> re = rt.postForEntity("http://localhost:8082/", originalOkmanyDTO, OkmanyDTO.class);
     		//url should be in the properies file
     		OkmanyDTO correctedOkmanyDTO = re.getBody();
+    		if(correctedOkmanyDTO.isErvenyes()) {
+        		String tipus=correctedOkmanyDTO.getOkmTipus();
+    			if(ervenyesTipusok.contains(tipus)) {
+    				throw new IllegalArgumentException("There are more than 1 okmany with type "+tipus);
+    			}
+    			ervenyesTipusok.add(tipus);
+    		}
     		correctedOkmLista.add(correctedOkmanyDTO);
     		System.out.println("\tisErvenyes("+originalOkmanyDTO.isErvenyes()+"->"+correctedOkmanyDTO.isErvenyes()+")");
     		System.out.println("\tgetOkmTipus("+originalOkmanyDTO.getOkmTipus()+"->"+correctedOkmanyDTO.getOkmTipus()+")");
