@@ -1,6 +1,7 @@
 package hu.idomsoft.firstmicroservice;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -42,13 +43,66 @@ public class Szemely {
     	szemelyDTO.setOkmLista(correctedOkmLista);
     	System.out.println(")");
     }
+    
+    private static boolean isGoodNev(String nev) {
+    	if(nev.length() > 80) return false;
+    	if(!nev.matches("[[a-z A-Z/-]['][öÖüÜóÓőŐúÚéÉáÁűŰ][Ä]]*"))return false;
+    	String[] words = nev.split("\\s+");
+    	int nevCount=0;
+    	for(String word: words) {
+    		if(!word.matches("[dD]r[.]"))nevCount++;
+    	}
+    	if( nevCount < 2) return false;
+    	return true;
+    }
+    
+    private void setVisNev(String visNev) {
+    	if (isGoodNev(visNev) ){
+    		szemelyDTO.setVisNev(visNev);
+    		System.out.println("setVisNev("+visNev+")");}
+    	else {
+			throw new IllegalArgumentException();
+		}
+    }
+    
+    private void setSzulNev(String szulNev) {
+    	if (isGoodNev(szulNev) ){
+    		szemelyDTO.setSzulNev(szulNev);
+    		System.out.println("setSzulNev("+szulNev+")");}
+    	else {
+			throw new IllegalArgumentException();
+		}
+    }
+    
+    private void setaNev(String aNev) {
+    	if (isGoodNev(aNev) ){
+    		szemelyDTO.setaNev(aNev);
+    		System.out.println("setaNev("+aNev+")");}
+    	else {
+			throw new IllegalArgumentException();
+		}
+    }
+    
+    private void setSzulDat(Date szulDat) {
+		System.out.println("setSzulDat("+szulDat+")");
+
+    		szemelyDTO.setSzulDat(szulDat);
+    }
 
 	public Szemely(
 			String neme,
+			String visNev,
+			String szulNev,
+			String aNev,
+			Date szulDat,
 			ArrayList<OkmanyDTO> okmLista) {
 		System.out.println("Szemely(");
 		setNeme(neme);
 		setOkmLista(okmLista);
+		setVisNev(visNev);
+		setSzulNev(szulNev);
+		setaNev(aNev);
+		setSzulDat(szulDat);
 		System.out.println(")");
 	}
 
