@@ -1,12 +1,13 @@
 package hu.idomsoft.firstmicroservice;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.joda.time.LocalDate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mycompany.mavenproject1.OkmanyDTO;
 import com.mycompany.mavenproject1.SzemelyDTO;
 
@@ -84,9 +85,15 @@ public class Szemely {
     }
     
     private void setSzulDat(Date szulDat) {
+    	LocalDate ago18 = new LocalDate();
+    	LocalDate ago120 = new LocalDate();
+    	LocalDate szulLocalDate = new LocalDate(szulDat);
+    	ago18=ago18.minusYears(18);
+    	ago120=ago120.minusYears(120);
+    	if(szulLocalDate.isAfter(ago18))throw new IllegalArgumentException("Too young"); 
+    	if(szulLocalDate.isBefore(ago120))throw new IllegalArgumentException("Too old");  
+   		szemelyDTO.setSzulDat(szulDat);
 		System.out.println("setSzulDat("+szulDat+")");
-
-    		szemelyDTO.setSzulDat(szulDat);
     }
 
 	public Szemely(
