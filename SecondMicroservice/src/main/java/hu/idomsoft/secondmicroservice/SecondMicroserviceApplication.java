@@ -22,10 +22,6 @@ public class SecondMicroserviceApplication {
 		this.dateFormat=dateFormat;
 	}
 	
-    @PostMapping("/param")
-    OkmanyDTO postParam(OkmanyWithParam o){
-        return o.getOkmanyDTO();
-    }
     
     @PostMapping("/")
     OkmanyDTO post(@RequestBody Okmany o){
