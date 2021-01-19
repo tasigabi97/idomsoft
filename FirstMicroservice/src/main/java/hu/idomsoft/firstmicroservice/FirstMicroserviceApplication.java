@@ -13,21 +13,12 @@ import com.mycompany.mavenproject1.SzemelyDTO;
 @SpringBootApplication
 @RestController
 public class FirstMicroserviceApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(FirstMicroserviceApplication.class, args);
 	}
 	
-    @PostMapping("/param")
-    SzemelyDTO postParam(Szemely sz){
-    	System.out.println("@PostMapping(\"/\"param)");
-        return sz.getSzemelyDTO();
-    }
-	
     @PostMapping("/")
     SzemelyDTO post(@RequestBody Szemely sz){
-    	System.out.println("@PostMapping(\"/\")");
         return sz.getSzemelyDTO();
     }
-
 }

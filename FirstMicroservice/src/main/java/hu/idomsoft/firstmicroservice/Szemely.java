@@ -1,18 +1,48 @@
 package hu.idomsoft.firstmicroservice;
 
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.HashMap;
+import java.util.Map;
 import org.joda.time.LocalDate;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
 import com.mycompany.mavenproject1.OkmanyDTO;
 import com.mycompany.mavenproject1.SzemelyDTO;
 
 public class Szemely {
 	private SzemelyDTO szemelyDTO = new SzemelyDTO();
+	private static final Map<String, String> allamDict=new HashMap<>();
+ 	static			
+	{
+ 		String kodszotatPath =new File("src/main/resources/kodszotar21_allampolg.json").getAbsolutePath();
+    	try {
+			FileReader reader = new FileReader(kodszotatPath);
+	    	JSONParser jsonParser = new JSONParser();
+	    	JSONObject jsonObject = (JSONObject)jsonParser.parse(reader);
+	        JSONArray rows=(JSONArray) jsonObject.get("rows");
+	        for(Object o : rows) {
+	        	JSONObject allam = (JSONObject) o;
+	        	String kod = (String) allam.get("kod");
+	        	String allampolgarsag = (String) allam.get("allampolgarsag");
+	        	allamDict.put(kod,allampolgarsag);	        }
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+
 	
     public SzemelyDTO getSzemelyDTO() {
 		return szemelyDTO;
@@ -20,8 +50,8 @@ public class Szemely {
 
 	private void setNeme(String neme) {
     	if(neme.equals("N") || neme.equals("F")) {
-    		System.out.println("setNeme("+neme+")");
-    		szemelyDTO.setNeme(neme);}
+    		szemelyDTO.setNeme(neme);
+    		System.out.println("setNeme("+neme+")");}
     	else {
     		throw new IllegalArgumentException("Got "+neme+" but F or N needed.");}
     }
@@ -103,12 +133,30 @@ public class Szemely {
    		szemelyDTO.setSzulDat(szulDat);
 		System.out.println("setSzulDat("+szulDat+")");
     }
+    
+    private void setAllampKod(String allampKod) {
+		if (allamDict.containsKey(allampKod)) {
+	   		szemelyDTO.setAllampKod(allampKod);
+			System.out.println("setAllampKod("+allampKod+")");}
+		else {
+			throw new IllegalArgumentException("allampKod "+allampKod+" is not in "+allamDict.toString());
+		}
+
+    }
+    
+
+    private void setAllampDekod() {
+    	String allampDekod=allamDict.get(szemelyDTO.getAllampKod());
+    	szemelyDTO.setAllampDekod(allampDekod);
+		System.out.println("setAllampDekod("+allampDekod+")");
+    }
 
 	public Szemely(
 			String neme,
 			String visNev,
 			String szulNev,
 			String aNev,
+			String allampKod,
 			Date szulDat,
 			ArrayList<OkmanyDTO> okmLista) {
 		System.out.println("Szemely(");
@@ -118,6 +166,8 @@ public class Szemely {
 		setSzulNev(szulNev);
 		setaNev(aNev);
 		setSzulDat(szulDat);
+		setAllampKod(allampKod);
+		setAllampDekod();
 		System.out.println(")");
 	}
 
